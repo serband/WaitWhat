@@ -25,6 +25,20 @@
     "href": "index.html",
     "title": "WaitWhat",
     "section": "",
-    "text": "Ratetables\n\n\n\n\n\n\n\nGLMs\n\n\nInsurance\n\n\nPricing\n\n\n\n\nWhere we build rate tables\n\n\n\n\n\n\nDec 16, 2023\n\n\n\n\n\n\nNo matching items"
+    "text": "Advent of Code 2023\n\n\n\n\n\n\n\nR\n\n\nCoding\n\n\n\n\nAdvent of Code Day\n\n\n\n\n\n\nDec 28, 2023\n\n\n\n\n\n\n  \n\n\n\n\nRatetables\n\n\n\n\n\n\n\nGLMs\n\n\nInsurance\n\n\nPricing\n\n\n\n\nWhere we build rate tables\n\n\n\n\n\n\nDec 16, 2023\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "posts/AdventOfCode/AdventOfCode2023.html",
+    "href": "posts/AdventOfCode/AdventOfCode2023.html",
+    "title": "Advent of Code 2023",
+    "section": "",
+    "text": "As I’m hip and trendy, I discovered Advent of Code [https://adventofcode.com/2023] just a few days before the end of the year. In the spirit of not giving every waking moment of my xmas holidays to Where Eagles Dare, mince pies and mulled wine, I decided I should at least use my noodle a bit and do these puzzles."
+  },
+  {
+    "objectID": "posts/AdventOfCode/AdventOfCode2023.html#day-1",
+    "href": "posts/AdventOfCode/AdventOfCode2023.html#day-1",
+    "title": "Advent of Code 2023",
+    "section": "Day 1",
+    "text": "Day 1\n\nPart 1\n\nlibrary(tidyverse)\nlibrary(data.table)\n\nfiles &lt;- read.csv(\"day1.csv\", header = FALSE)\ncolnames(files) &lt;- \"input\"\n\n# create regex pattern to find the first number in a string \nfirst_pattern &lt;- \"\\\\d\"\n\n# regex to extract the last number in a string\nlast_pattern &lt;- \"\\\\d(?=[^\\\\d]*$)\"\n\n\n# create a new column with the first and last numbers in a string\n\nfiles$first &lt;- (stringr::str_extract(files$input,first_pattern))\nfiles$last &lt;- (stringr::str_extract(files$input,last_pattern))\nfiles$NewNr &lt;- as.numeric(paste0(files$first,files$last))\n\n# sum the  column\nsum(files$NewNr)\n\n[1] 54331\n\n\n\n\nPart 2\n\n# Part 2 \n\n# list of numbers as words\nnumers_as_words  &lt;- c(\"one\",\"two\",\"three\",\"four\",\"five\",\"six\",\"seven\",\"eight\",\"nine\",\"1\",\"2\",\"3\",\"4\",\"5\",\"6\",\"7\",\"8\",\"9\")\nmapping &lt;- c(1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,8,9)\n\n# get back a list showing the start and end points of a string that match any of the above\n# numbers as words\n\n\n#find the starting positions of where to find the numbers as words in the string\n# return the max and min of the start column\n\n#function to return the max value of the start column\nmax_start &lt;- function(x){\n  \n   \n  # find the starting location by matching either the digits or numbers in the long string \n  starting_positions = stringr::str_locate(x, numers_as_words)[,1] \n\n  # the lowest number corresponds to the first number in the string\n  first = mapping[which(min(starting_positions,na.rm = TRUE) == starting_positions)]\n  \n  # find the last starting position for each\n  end_positions &lt;- stringr::str_locate_all(x, numers_as_words) %&gt;% \n    sapply(.,max) %&gt;% \n    # replace -Inf with NA b/c it returns stupid -Inf when it cant find a match \n    replace(., is.infinite(.), NA) \n  \n\n  last = mapping[which(max(end_positions,na.rm = TRUE) == end_positions)]\n  \n  return(as.numeric(paste0(first,last)))\n\n        \n}\n\n\nfiles$newNr2 &lt;- sapply(files$input, max_start)\n\n\n# this should work\nsum(files$newNr2)\n\n[1] 54518"
   }
 ]

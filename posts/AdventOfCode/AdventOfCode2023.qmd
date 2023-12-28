@@ -1,0 +1,96 @@
+---
+title: 'Advent of Code 2023'
+date: '2023-12-28'
+#author: "Serban Dragne"
+categories: ['R','Coding']
+description: 'Advent of Code Day'
+execute:
+  message: false
+  warning: false
+editor_options:
+  chunk_output_type: console
+---
+
+As I'm hip and trendy, I discovered Advent of Code \[<https://adventofcode.com/2023>\] just a few days before the end of the year. In the spirit of not giving every waking moment of my xmas holidays to Where Eagles Dare, mince pies and mulled wine, I decided I should at least use my noodle a bit and do these puzzles.
+
+## Day 1
+
+### Part 1
+
+```{r}
+library(tidyverse)
+library(data.table)
+
+files <- read.csv("day1.csv", header = FALSE)
+colnames(files) <- "input"
+
+# create regex pattern to find the first number in a string 
+first_pattern <- "\\d"
+
+# regex to extract the last number in a string
+last_pattern <- "\\d(?=[^\\d]*$)"
+
+
+# create a new column with the first and last numbers in a string
+
+files$first <- (stringr::str_extract(files$input,first_pattern))
+files$last <- (stringr::str_extract(files$input,last_pattern))
+files$NewNr <- as.numeric(paste0(files$first,files$last))
+
+# sum the  column
+sum(files$NewNr)
+
+
+
+```
+
+### Part 2
+
+```{r}
+
+
+# Part 2 
+
+# list of numbers as words
+numers_as_words  <- c("one","two","three","four","five","six","seven","eight","nine","1","2","3","4","5","6","7","8","9")
+mapping <- c(1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,8,9)
+
+# get back a list showing the start and end points of a string that match any of the above
+# numbers as words
+
+
+#find the starting positions of where to find the numbers as words in the string
+# return the max and min of the start column
+
+#function to return the max value of the start column
+max_start <- function(x){
+  
+   
+  # find the starting location by matching either the digits or numbers in the long string 
+  starting_positions = stringr::str_locate(x, numers_as_words)[,1] 
+
+  # the lowest number corresponds to the first number in the string
+  first = mapping[which(min(starting_positions,na.rm = TRUE) == starting_positions)]
+  
+  # find the last starting position for each
+  end_positions <- stringr::str_locate_all(x, numers_as_words) %>% 
+    sapply(.,max) %>% 
+    # replace -Inf with NA b/c it returns stupid -Inf when it cant find a match 
+    replace(., is.infinite(.), NA) 
+  
+
+  last = mapping[which(max(end_positions,na.rm = TRUE) == end_positions)]
+  
+  return(as.numeric(paste0(first,last)))
+
+        
+}
+
+
+files$newNr2 <- sapply(files$input, max_start)
+
+
+# this should work
+sum(files$newNr2)
+
+```
